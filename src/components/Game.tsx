@@ -35,17 +35,17 @@ const Game: React.FC = () => {
         newHead.x < 0 ||
         newHead.x >= gridSize ||
         newHead.y < 0 ||
-        newHead.y >= gridSize
-        // prevSnake.some(
-        //   (segment) => segment.x === newHead.x && segment.y === newHead.y
-        // )
+        newHead.y >= gridSize ||
+        (snake.length > 1 &&
+          prevSnake.some(
+            (segment) => segment.x === newHead.x && segment.y === newHead.y
+          ))
       ) {
         setGameOver(true);
         return prevSnake;
       }
 
-      const newSnake = [newHead, ...prevSnake];
-      console.log(speed, delay, pause);
+      const newSnake = [newHead, ...prevSnake]; // Adds a new head to the snake
 
       if (newHead.x < 2 || newHead.x >= gridSize - 2) {
         setDelay(30);
@@ -54,17 +54,18 @@ const Game: React.FC = () => {
       } else {
         setDelay(0);
       }
-
+      console.log(speed, delay, speed + delay);
       if (newHead.x === apple.x && newHead.y === apple.y) {
-        setApple(getRandomPosition(gridSize));
-        setSpeed((prevSpeed) => (prevSpeed > 50 ? prevSpeed - 10 : prevSpeed));
+        // Note that the apple is eaten, tail is not removed then
+        setApple(getRandomPosition(gridSize)); // Moves the apple
+        setSpeed((prevSpeed) => (prevSpeed > 50 ? prevSpeed - 5 : prevSpeed)); // Increases the speed
       } else {
-        newSnake.pop();
+        newSnake.pop(); // Removes the tail of the snake
       }
 
       return newSnake;
     });
-  }, [apple, direction, pause, gameOver, gridSize, pause]);
+  }, [gameOver, pause, direction, speed, delay, apple]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -103,7 +104,7 @@ const Game: React.FC = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [pause, gameOver, delay, direction]);
+  }, [initialSnake, pause, gameOver, delay, direction]);
 
   useEffect(() => {
     const interval = setInterval(moveSnake, speed + delay);
@@ -114,7 +115,23 @@ const Game: React.FC = () => {
     <Container>
       <div>
         <h1>Snake Game</h1>
-        {gameOver ? <h2>Game Over</h2> : null}
+        {gameOver || pause ? (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              color: "red",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
+              padding: "20px",
+              borderRadius: "10px",
+              zIndex: 10,
+            }}
+          >
+            <h2>{gameOver ? "Game Over" : "Pause"}</h2>
+          </div>
+        ) : null}
         <div
           style={{
             display: "grid",
@@ -163,7 +180,7 @@ const Game: React.FC = () => {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        backgroundColor: isHead ? "#AAAA07" : "green",
+                        backgroundColor: isHead ? "darkgreen" : "green",
                       }}
                     ></div>
                   ) : null}
