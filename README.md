@@ -1,6 +1,6 @@
-React Snake Game
+**_React Snake Game_**
 
-![alt text](image.png)
+<img src="image.png" width=350 alt="screenshot">
 
 # Snake Game
 
