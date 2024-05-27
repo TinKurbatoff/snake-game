@@ -1,3 +1,4 @@
+import { dir } from "console";
 import React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { Container } from "react-bootstrap";
@@ -15,11 +16,12 @@ const getRandomPosition = (gridSize: number): Position => {
 };
 
 const Game = () => {
-  const initialSnake = [{ x: 10, y: 10 }];
+  const initialSnake = [getRandomPosition(gridSize)];
   const [snake, setSnake] = useState<Position[]>(initialSnake);
   const [direction, setDirection] = useState<Position>({ x: 0, y: 0 });
   const [apple, setApple] = useState<Position>(getRandomPosition(gridSize));
   const [speed, setSpeed] = useState(startSpeed);
+  const [score, setScore] = useState(0);
   const [delay, setDelay] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [pause, setPause] = useState(false);
@@ -32,6 +34,7 @@ const Game = () => {
         x: prevSnake[0].x + direction.x,
         y: prevSnake[0].y + direction.y,
       };
+      const newSnake = [newHead, ...prevSnake]; // Adds a new head to the snake
 
       // Check if the snake hits the wall or itself
       if (
@@ -47,36 +50,38 @@ const Game = () => {
         return prevSnake;
       }
 
-      const newSnake = [newHead, ...prevSnake]; // Adds a new head to the snake
-
       // Slow down the snake if it is near the wall
       if (newHead.x < 2 || newHead.x >= gridSize - 2) {
-        setDelay(30);
+        setDelay(50);
       } else if (newHead.y < 2 || newHead.y >= gridSize - 2) {
-        setDelay(30);
+        setDelay(50);
       } else {
         setDelay(0);
       }
-      console.log(speed, delay, speed + delay);
+
       if (newHead.x === apple.x && newHead.y === apple.y) {
         // Note that the apple is eaten, tail is not removed then
+        setScore((prevScore) => prevScore + 1);
         setApple(getRandomPosition(gridSize)); // Moves the apple
-        setSpeed((prevSpeed) => (prevSpeed > 30 ? prevSpeed - 5 : prevSpeed)); // Increases the speed
+        setSpeed((prevSpeed) => (prevSpeed > 30 ? prevSpeed - 4 : prevSpeed)); // Increases the speed
       } else {
         newSnake.pop(); // Removes the tail of the snake
       }
 
       return newSnake;
     });
-  }, [gameOver, pause, direction, speed, delay, apple]);
+  }, [direction, gameOver, pause]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (pause && event.key !== "p") return;
       switch (event.key) {
         case "Escape":
-          setSpeed(startSpeed);
-          setSnake(initialSnake);
+          if (gameOver) {
+            setSpeed(startSpeed);
+            setSnake(initialSnake);
+            setScore(0);
+          } // When game is restarted
           setGameOver(!gameOver);
           break;
         case "p":
@@ -108,12 +113,13 @@ const Game = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [direction, pause, gameOver, delay, speed]);
+  }, [gameOver, pause, direction, delay]);
 
   useEffect(() => {
+    console.log(speed, delay, speed + delay);
     const interval = setInterval(moveSnake, speed + delay);
     return () => clearInterval(interval);
-  }, [moveSnake, speed, delay, gameOver]);
+  }, [moveSnake, delay, speed]);
 
   return (
     <Container>
@@ -136,6 +142,12 @@ const Game = () => {
             <h2>{gameOver ? "Game Over" : "Pause"}</h2>
           </div>
         ) : null}
+        <div>
+          <p style={{ fontSize: "0.9rem", marginBottom: "4px" }}>
+            Score: {score}
+          </p>
+        </div>
+
         <div
           style={{
             display: "grid",
