@@ -1,6 +1,11 @@
 import React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { Container } from "react-bootstrap";
+import { start } from "repl";
+import { startupSnapshot } from "v8";
+
+const startSpeed = 150;
+const gridSize = 35;
 
 type Position = { x: number; y: number };
 
@@ -12,12 +17,11 @@ const getRandomPosition = (gridSize: number): Position => {
 };
 
 const Game: React.FC = () => {
-  const gridSize = 35;
   const initialSnake = [{ x: 10, y: 10 }];
   const [snake, setSnake] = useState<Position[]>(initialSnake);
   const [direction, setDirection] = useState<Position>({ x: 0, y: 0 });
   const [apple, setApple] = useState<Position>(getRandomPosition(gridSize));
-  const [speed, setSpeed] = useState(150);
+  const [speed, setSpeed] = useState(startSpeed);
   const [delay, setDelay] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [pause, setPause] = useState(false);
@@ -58,7 +62,7 @@ const Game: React.FC = () => {
       if (newHead.x === apple.x && newHead.y === apple.y) {
         // Note that the apple is eaten, tail is not removed then
         setApple(getRandomPosition(gridSize)); // Moves the apple
-        setSpeed((prevSpeed) => (prevSpeed > 50 ? prevSpeed - 5 : prevSpeed)); // Increases the speed
+        setSpeed((prevSpeed) => (prevSpeed > 30 ? prevSpeed - 5 : prevSpeed)); // Increases the speed
       } else {
         newSnake.pop(); // Removes the tail of the snake
       }
@@ -72,6 +76,7 @@ const Game: React.FC = () => {
       if (pause && event.key !== "p") return;
       switch (event.key) {
         case "Escape":
+          setSpeed(startSpeed);
           setSnake(initialSnake);
           setGameOver(!gameOver);
           break;
@@ -190,6 +195,7 @@ const Game: React.FC = () => {
           )}
         </div>
       </div>
+      <div>Help</div>
     </Container>
   );
 };
