@@ -1,8 +1,6 @@
-**_React Snake Game_**
+# React Snake Game
 
 <img src="image.png" width=350 alt="screenshot">
-
-# Snake Game
 
 Welcome to the Snake Game! This is a simple implementation of the classic Snake game using JavaScript and React.
 
@@ -10,7 +8,7 @@ Welcome to the Snake Game! This is a simple implementation of the classic Snake 
 
 - Classic Snake gameplay
 - Responsive design
-- Score tracking (not yet implemented)
+- Score tracking (_not yet implemented_)
 
 ## Demo
 
@@ -27,12 +25,13 @@ Welcome to the Snake Game! This is a simple implementation of the classic Snake 
 
 2. **Install and Run:**
 
-   ```npm install
+   ```sh
+   npm install
    npm start
    ```
 
 3. **Building for production:**
 
-   ```~$ npm run build
-
+   ```sh
+   npm run build
    ```
