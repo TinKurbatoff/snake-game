@@ -1,6 +1,6 @@
 # React Snake Game
 
-<img src="image.png" width=350 alt="screenshot">
+<center><img src="image.png" width=350 alt="screenshot"></center>
 
 Welcome to the Snake Game! This is a simple implementation of the classic Snake game using JavaScript and React.
 

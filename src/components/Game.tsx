@@ -1,8 +1,6 @@
 import React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { Container } from "react-bootstrap";
-import { start } from "repl";
-import { startupSnapshot } from "v8";
 
 const startSpeed = 150;
 const gridSize = 35;
@@ -16,7 +14,7 @@ const getRandomPosition = (gridSize: number): Position => {
   };
 };
 
-const Game: React.FC = () => {
+const Game = () => {
   const initialSnake = [{ x: 10, y: 10 }];
   const [snake, setSnake] = useState<Position[]>(initialSnake);
   const [direction, setDirection] = useState<Position>({ x: 0, y: 0 });
@@ -35,15 +33,15 @@ const Game: React.FC = () => {
         y: prevSnake[0].y + direction.y,
       };
 
+      // Check if the snake hits the wall or itself
       if (
         newHead.x < 0 ||
         newHead.x >= gridSize ||
         newHead.y < 0 ||
         newHead.y >= gridSize ||
-        (snake.length > 1 &&
-          prevSnake.some(
-            (segment) => segment.x === newHead.x && segment.y === newHead.y
-          ))
+        prevSnake
+          .slice(2)
+          .some((segment) => segment.x === newHead.x && segment.y === newHead.y)
       ) {
         setGameOver(true);
         return prevSnake;
@@ -51,6 +49,7 @@ const Game: React.FC = () => {
 
       const newSnake = [newHead, ...prevSnake]; // Adds a new head to the snake
 
+      // Slow down the snake if it is near the wall
       if (newHead.x < 2 || newHead.x >= gridSize - 2) {
         setDelay(30);
       } else if (newHead.y < 2 || newHead.y >= gridSize - 2) {
@@ -109,7 +108,7 @@ const Game: React.FC = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [initialSnake, pause, gameOver, delay, direction]);
+  }, [direction, pause, gameOver, delay, speed]);
 
   useEffect(() => {
     const interval = setInterval(moveSnake, speed + delay);
@@ -167,6 +166,7 @@ const Game: React.FC = () => {
                 >
                   {isApple ? (
                     <span
+                      role="img"
                       style={{
                         width: "11px",
                         height: "11px",
