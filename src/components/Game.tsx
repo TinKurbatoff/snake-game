@@ -195,7 +195,7 @@ const Game: React.FC = () => {
           )}
         </div>
       </div>
-      <div>Help</div>
+      <div>P — pause, ESC — restart</div>
     </Container>
   );
 };
