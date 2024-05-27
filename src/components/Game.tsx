@@ -1,4 +1,3 @@
-import { dir } from "console";
 import React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { Container } from "react-bootstrap";
@@ -22,9 +21,26 @@ const Game = () => {
   const [apple, setApple] = useState<Position>(getRandomPosition(gridSize));
   const [speed, setSpeed] = useState(startSpeed);
   const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
   const [delay, setDelay] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [pause, setPause] = useState(false);
+
+  // Load the high score from localStorage when the component mounts
+  useEffect(() => {
+    const storedHighScore = localStorage.getItem("highScore");
+    if (storedHighScore) {
+      setHighScore(Number(storedHighScore));
+    }
+  }, []);
+
+  // Update the high score in state and localStorage if the score changes
+  useEffect(() => {
+    if (score > highScore) {
+      setHighScore(parseInt(score.toString()));
+      localStorage.setItem("highScore", score.toString());
+    }
+  }, [score, highScore]);
 
   const moveSnake = useCallback(() => {
     if (gameOver || pause) return;
@@ -144,7 +160,7 @@ const Game = () => {
         ) : null}
         <div>
           <p style={{ fontSize: "0.9rem", marginBottom: "4px" }}>
-            Score: {score}
+            Score: {score} (High Score: {highScore})
           </p>
         </div>
 
