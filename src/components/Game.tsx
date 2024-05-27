@@ -195,7 +195,9 @@ const Game: React.FC = () => {
           )}
         </div>
       </div>
-      <div>P — pause, ESC — restart</div>
+      <div>
+        <p style={{ fontSize: "0.9rem" }}>P — pause, ESC — restart</p>
+      </div>
     </Container>
   );
 };
